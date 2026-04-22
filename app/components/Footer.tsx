@@ -29,7 +29,7 @@ export function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <div>© 2026 REACT_MELBOURNE · MADE IN NAARM</div>
+        <div>© 2026 REACT_MELBOURNE · MADE IN NAARM · BY <a href="https://metasal.xyz">METASAL.XYZ</a></div>
         <div>
           STATUS: <span style={{ color: "var(--cyan)" }}>● ONLINE</span>
         </div>
