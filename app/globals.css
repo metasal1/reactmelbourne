@@ -714,3 +714,62 @@ footer {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Subscribe */
+#subscribe .section-label::before { content: '05 / '; }
+.subscribe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.subscribe-tag {
+  color: var(--ink-dim);
+  max-width: 600px;
+  text-align: center;
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.subscribe-form {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+}
+.subscribe-form:focus-within { border-color: var(--cyan); }
+.subscribe-form input[type="email"] {
+  flex: 1;
+  padding: 16px 18px;
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  outline: none;
+}
+.subscribe-form input[type="email"]::placeholder { color: var(--ink-dim); }
+.subscribe-form button {
+  padding: 16px 22px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.subscribe-form button:hover:not(:disabled) { background: #7ee8ff; }
+.subscribe-form button:disabled { opacity: 0.6; cursor: default; }
+.subscribe-msg {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 480px) {
+  .subscribe-form { flex-direction: column; }
+  .subscribe-form button { width: 100%; }
+}

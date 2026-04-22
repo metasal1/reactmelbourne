@@ -14,8 +14,8 @@ export function Hero() {
           A meetup for people building with React, React Native, and the sprawling JavaScript universe around them. Real talks from real engineers. Pizza. Drinks. The occasional production horror story.
         </p>
         <div className="hero-ctas">
-          <a href="#events" className="btn btn-primary">
-            Next meetup
+          <a href="#subscribe" className="btn btn-primary">
+            Get the dispatch
             <span className="btn-arrow">→</span>
           </a>
           <a href="https://www.meetup.com/react-melbourne/" className="btn btn-secondary">

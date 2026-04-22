@@ -5,6 +5,7 @@ import { Events } from "./components/Events";
 import { About } from "./components/About";
 import { Community } from "./components/Community";
 import { Speakers } from "./components/Speakers";
+import { Subscribe } from "./components/Subscribe";
 import { Footer } from "./components/Footer";
 import { ScrollReveal } from "./components/ScrollReveal";
 import { events } from "./events";
@@ -89,6 +90,7 @@ export default function Page() {
       <About />
       <Community />
       <Speakers />
+      <Subscribe />
       <Footer />
       <ScrollReveal />
     </>
