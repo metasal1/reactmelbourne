@@ -10,11 +10,10 @@ binding = "ASSETS"
 [observability]
 enabled = true
 
-# Custom domain — uncomment after connecting reactmelbourne.com to Cloudflare
-# [[routes]]
-# pattern = "reactmelbourne.com"
-# custom_domain = true
-#
-# [[routes]]
-# pattern = "www.reactmelbourne.com"
-# custom_domain = true
+[[routes]]
+pattern = "reactmelbourne.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.reactmelbourne.com"
+custom_domain = true
