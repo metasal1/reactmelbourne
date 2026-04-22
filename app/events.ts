@@ -10,6 +10,8 @@ export interface MeetupEvent {
   attendees: string;
   description: string;
   status: EventStatus;
+  startISO: string;
+  endISO: string;
 }
 
 export const events: MeetupEvent[] = [
@@ -24,6 +26,8 @@ export const events: MeetupEvent[] = [
     description:
       "We're back. If you've solved a gnarly problem, improved performance, redesigned architecture, or learned something the hard way — we want to hear it. Real-world lessons beat slide perfection.",
     status: "upcoming",
+    startISO: "2026-04-01T07:00:00Z",
+    endISO: "2026-04-01T10:00:00Z",
   },
   {
     day: "DEC 3",
@@ -36,6 +40,8 @@ export const events: MeetupEvent[] = [
     description:
       "Packed room, three speakers, end-of-year vibes. Sent 2025 off with talks on state management, testing strategies, and one very cursed bug war-story.",
     status: "past",
+    startISO: "2025-12-03T07:00:00Z",
+    endISO: "2025-12-03T10:00:00Z",
   },
   {
     day: "SEP 24",
@@ -48,5 +54,7 @@ export const events: MeetupEvent[] = [
     description:
       "Biggest turnout of the year. Talks spanned React Server Components in production, a migration from Redux, and the quiet joy of tiny build tools.",
     status: "past",
+    startISO: "2025-09-24T08:00:00Z",
+    endISO: "2025-09-24T11:00:00Z",
   },
 ];

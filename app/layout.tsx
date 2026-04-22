@@ -15,12 +15,34 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "React Melbourne — JavaScript meetup for devs building real things",
+  title: {
+    default: "React Melbourne — JavaScript meetup for devs building real things",
+    template: "%s · React Melbourne",
+  },
   description:
     "Melbourne's React community. 6,070 members. Quarterly meetups covering React, React Native, performance, architecture, and the hard-won lessons in between.",
   metadataBase: new URL("https://reactmelbourne.com"),
+  applicationName: "React Melbourne",
+  keywords: [
+    "React Melbourne",
+    "React meetup Melbourne",
+    "React Australia",
+    "JavaScript meetup Melbourne",
+    "React Native Melbourne",
+    "frontend meetup Melbourne",
+    "TypeScript meetup",
+    "Naarm tech",
+    "Melbourne developers",
+  ],
+  authors: [{ name: "React Melbourne" }],
+  creator: "React Melbourne",
+  publisher: "React Melbourne",
+  category: "technology",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "React Melbourne",
+    title: "React Melbourne — JavaScript meetup for devs building real things",
     description:
       "A meetup for people building with React, React Native, and the sprawling JavaScript universe around them.",
     url: "https://reactmelbourne.com",
@@ -32,6 +54,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "React Melbourne",
     description: "JavaScript meetup for devs building real things.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
   },
 };
 
