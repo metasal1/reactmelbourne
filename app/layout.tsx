@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, JetBrains_Mono } from "next/font/google";
+import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -74,6 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>
+      <GoogleAnalytics />
     </html>
   );
 }
