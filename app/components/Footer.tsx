@@ -22,9 +22,9 @@ export function Footer() {
         <div className="footer-col">
           <h4>CONTRIBUTE</h4>
           <ul>
-            <li><a href="https://forms.gle/qmYDjAFNvkyNqQtn9">Submit a talk</a></li>
-            <li><a href="#">Sponsor a meetup</a></li>
-            <li><a href="#">Host an event</a></li>
+            <li><a href="/talk">Submit a talk</a></li>
+            <li><a href="/sponsor">Sponsor a meetup</a></li>
+            <li><a href="/sponsor">Host an event</a></li>
           </ul>
         </div>
       </div>
