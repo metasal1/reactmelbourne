@@ -1,6 +1,7 @@
-import { events } from "../events";
+import { getEvents } from "../lib/meetup";
 
-export function Events() {
+export async function Events() {
+  const events = await getEvents();
   return (
     <section id="events" className="reveal">
       <div className="section-label mono">UPCOMING &amp; RECENT</div>

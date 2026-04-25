@@ -9,9 +9,10 @@ import { Sponsors } from "./components/Sponsors";
 import { Subscribe } from "./components/Subscribe";
 import { Footer } from "./components/Footer";
 import { ScrollReveal } from "./components/ScrollReveal";
-import { events } from "./events";
+import { getEvents } from "./lib/meetup";
 
-export default function Page() {
+export default async function Page() {
+  const events = await getEvents();
   const jsonLd = [
     {
       "@context": "https://schema.org",
