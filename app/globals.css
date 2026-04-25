@@ -716,7 +716,7 @@ footer {
 }
 
 /* Subscribe */
-#subscribe .section-label::before { content: '05 / '; }
+#subscribe .section-label::before { content: '06 / '; }
 .subscribe {
   display: flex;
   flex-direction: column;
@@ -988,4 +988,98 @@ footer {
   .tf-head { padding: 16px 20px; flex-direction: column; gap: 8px; align-items: flex-start; }
   .tf-step { padding: 40px 20px; }
   .tf-foot { padding: 16px 20px; }
+}
+
+/* Sponsors */
+#sponsors .section-label::before { content: '05 / '; }
+#sponsors {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.sponsor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 48px;
+  background: var(--sponsor-color, var(--bg-2));
+  color: var(--sponsor-ink, var(--ink));
+  border: 1px solid var(--line-2);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.3s;
+  overflow: hidden;
+  position: relative;
+}
+.sponsor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--sponsor-color, var(--cyan));
+}
+.sponsor-card-hero {
+  padding: 64px 56px;
+  min-height: 280px;
+  justify-content: space-between;
+}
+.sponsor-card-tier {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.sponsor-card-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+.sponsor-card-blurb {
+  max-width: 640px;
+  font-size: 16px;
+  line-height: 1.55;
+  opacity: 0.92;
+  margin: 0;
+}
+.sponsor-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 10px 14px;
+  border: 1px solid var(--sponsor-ink, #fff);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.95;
+  transition: background 0.2s, color 0.2s;
+}
+.sponsor-card:hover .sponsor-card-cta {
+  background: var(--sponsor-ink, #fff);
+  color: var(--sponsor-color);
+}
+.sponsor-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.sponsor-row .sponsor-card {
+  padding: 32px 28px;
+  min-height: 160px;
+  justify-content: space-between;
+}
+.sponsor-row .sponsor-card-mark {
+  font-size: clamp(28px, 3vw, 36px);
+}
+.sponsor-footer {
+  font-size: 12px;
+  color: var(--ink-dim);
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.sponsor-footer a { color: var(--cyan); }
+.sponsor-footer a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .sponsor-card-hero { padding: 40px 28px; min-height: 220px; }
 }

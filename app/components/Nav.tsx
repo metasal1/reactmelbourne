@@ -12,6 +12,7 @@ export function Nav() {
         <a href="#about">about</a>
         <a href="#community">community</a>
         <a href="#speakers">speak</a>
+        <a href="#sponsors">sponsors</a>
       </div>
       <a href="https://www.meetup.com/react-melbourne/" className="nav-cta">
         Join →

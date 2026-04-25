@@ -5,6 +5,7 @@ import { Events } from "./components/Events";
 import { About } from "./components/About";
 import { Community } from "./components/Community";
 import { Speakers } from "./components/Speakers";
+import { Sponsors } from "./components/Sponsors";
 import { Subscribe } from "./components/Subscribe";
 import { Footer } from "./components/Footer";
 import { ScrollReveal } from "./components/ScrollReveal";
@@ -29,6 +30,13 @@ export default function Page() {
         "@type": "City",
         name: "Melbourne",
       },
+      sponsor: [
+        {
+          "@type": "Organization",
+          name: "Kogan.com",
+          url: "https://www.kogan.com",
+        },
+      ],
     },
     {
       "@context": "https://schema.org",
@@ -90,6 +98,7 @@ export default function Page() {
       <About />
       <Community />
       <Speakers />
+      <Sponsors />
       <Subscribe />
       <Footer />
       <ScrollReveal />
