@@ -11,7 +11,7 @@ export function Speakers() {
             You don&apos;t need a polished conference deck. Fifteen minutes on something you learned, shipped, or screamed at. If you&apos;ve got a story, we&apos;ve got a mic, a projector, and a roomful of devs who actually want to hear it.
           </p>
         </div>
-        <a href="https://forms.gle/qmYDjAFNvkyNqQtn9" className="btn btn-primary">
+        <a href="/talk" className="btn btn-primary">
           Submit a talk
           <span className="btn-arrow">→</span>
         </a>

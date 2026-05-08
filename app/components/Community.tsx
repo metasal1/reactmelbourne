@@ -41,7 +41,16 @@ export function Community() {
         }}
       >
         Organized by{" "}
-        <span style={{ color: "var(--cyan)" }}>Goran Stefkovski</span> and a small crew of volunteers.
+        <span style={{ color: "var(--cyan)" }}>Goran Stefkovski</span> and{" "}
+        <a
+          href="https://www.linkedin.com/in/anita-rajalingam/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "var(--cyan)" }}
+        >
+          Anita Rajalingam
+        </a>
+        , with a small crew of volunteers.
       </p>
     </section>
   );

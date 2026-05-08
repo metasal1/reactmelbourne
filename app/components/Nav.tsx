@@ -1,3 +1,5 @@
+import { JoinModal } from "./JoinModal";
+
 export function Nav() {
   return (
     <nav>
@@ -14,9 +16,7 @@ export function Nav() {
         <a href="#speakers">speak</a>
         <a href="#sponsors">sponsors</a>
       </div>
-      <a href="https://www.meetup.com/react-melbourne/" className="nav-cta">
-        Join →
-      </a>
+      <JoinModal />
     </nav>
   );
 }

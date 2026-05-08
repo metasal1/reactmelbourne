@@ -9,7 +9,10 @@ Built with **Next.js 15** (App Router) and deployed to **Cloudflare Workers** vi
 - Next.js 15 · React 19 · TypeScript
 - `next/font/google` — Fraunces (display) + JetBrains Mono (body)
 - `@opennextjs/cloudflare` — runs Next.js on the Workers runtime
-- Zero runtime dependencies beyond React/Next
+- **Resend** — mailing list (Audiences) + transactional email
+- **Meetup API** — events pulled live, daily-cron refresh
+- **Telegram bot** — submission/signup pings
+- **Google Analytics 4** — page views
 
 ## Getting started
 
@@ -18,11 +21,11 @@ npm install
 npm run dev
 ```
 
-Opens at [http://localhost:3000](http://localhost:3000).
+Opens at [http://localhost:3000](http://localhost:3000) (or 3001/3002 if 3000 is busy).
 
 ## Preview on the Workers runtime
 
-`npm run dev` uses the Node dev server. To preview exactly how it'll run in production (on Cloudflare's `workerd` runtime via wrangler):
+`npm run dev` uses the Node dev server. To preview exactly how it'll run in production:
 
 ```bash
 npm run preview
@@ -30,45 +33,71 @@ npm run preview
 
 ## Deploy to Cloudflare
 
-### One-time setup
-
 ```bash
-npx wrangler login
-```
-
-### Every deploy
-
-```bash
+npx wrangler login   # one-time
 npm run deploy
 ```
 
-This builds with OpenNext and pushes to Workers. First deploy gives you `https://reactmelbourne.<your-subdomain>.workers.dev`.
+Custom domains `reactmelbourne.com` and `www.reactmelbourne.com` are wired in `wrangler.toml`.
 
-### Custom domain (reactmelbourne.com)
+## Environment
 
-1. Add `reactmelbourne.com` as a Cloudflare zone (dashboard → Add site).
-2. Update your registrar's nameservers to Cloudflare's.
-3. Uncomment the `[[routes]]` block in `wrangler.toml`.
-4. Run `npm run deploy` again.
+Local dev reads `.env.local` (gitignored). Production reads Cloudflare Worker secrets — set them with `wrangler secret put NAME` or in the dashboard.
+
+| Var | Purpose | Required |
+|---|---|---|
+| `RESEND_API_KEY` | Resend full-access key | yes |
+| `RESEND_AUDIENCE_ID` | Mailing list audience UUID | yes |
+| `RESEND_FROM_EMAIL` | Verified sender (e.g. `hello@reactmelbourne.com`) | yes |
+| `RESEND_FROM_NAME` | Display name in `From:` | optional, defaults to "React Melbourne" |
+| `NOTIFY_EMAIL` | Where talk/sponsor submissions get emailed | optional, defaults to `gm@metasal.xyz` |
+| `TELEGRAM_BOT_TOKEN` | Bot for organizer notifications | optional |
+| `TELEGRAM_CHAT_ID` | Chat to ping | optional |
+| `MEETUP_GROUP_URLNAME` | Defaults to `react-melbourne` | optional |
+
+After changing `wrangler.toml` bindings, regenerate types:
+
+```bash
+npm run cf-typegen
+```
+
+## Pages and flows
+
+- **`/`** — landing page. Hero, events, community, speakers, sponsors, newsletter signup.
+- **`/talk`** — Typeform-style talk submission flow (replaces old Google Form). Sends notification + auto-confirmation via Resend.
+- **`/sponsor`** — Same Typeform flow for sponsorship inquiries.
+- **Join modal** — opens from the nav `Join →` button. Adds email to Resend Audience, fires welcome email, then opens Meetup in a new tab.
+- **Subscribe section** — inline signup on the landing page (same Resend Audience).
+
+All form submissions log a Telegram message if the bot is configured.
 
 ## Project layout
 
 ```
 app/
-  components/       UI — Nav, Hero, Stats, Events, About,
-                    Community, Speakers, Footer, ScrollReveal
-  events.ts         Event data (single source of truth)
+  components/       Hero, Nav, JoinModal, Subscribe, Events, About,
+                    Community, Speakers, Sponsors, Stats, Footer,
+                    ScrollReveal, GoogleAnalytics, TypeformFlow
+  actions/
+    subscribe.ts    Mailing list signup (Resend Audiences + welcome email)
+    submissions.ts  /talk + /sponsor handlers (Resend notify + confirm)
+  lib/
+    meetup.ts       Meetup API client (fetched daily via cron)
+  events.ts         Static event metadata
+  sponsors.ts       Sponsor data
+  layout.tsx        Fonts, metadata, GA
+  page.tsx          Landing-page composition
   globals.css       Design system
-  layout.tsx        Fonts, metadata
-  page.tsx          Composes the landing page
-wrangler.toml       Cloudflare Workers config
+  talk/page.tsx     Talk submission page
+  sponsor/page.tsx  Sponsor inquiry page
+wrangler.toml       Cloudflare Workers config (custom domains, observability)
 open-next.config.ts OpenNext adapter config
-next.config.ts      Next.js config (+ dev bindings hook)
+next.config.ts      Next.js config
 ```
 
 ## Updating events
 
-Edit `app/events.ts`. Events render in order. Set `status: "upcoming"` for the next meetup and `"past"` for the rest.
+Static events live in `app/events.ts`. Live events come from Meetup via `app/lib/meetup.ts` — refreshed daily by a Cloudflare cron. To force a refresh, redeploy.
 
 ## Adding Cloudflare bindings
 
