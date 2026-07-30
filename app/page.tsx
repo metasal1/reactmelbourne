@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
 import { Stats } from "./components/Stats";
@@ -10,6 +11,10 @@ import { Subscribe } from "./components/Subscribe";
 import { Footer } from "./components/Footer";
 import { ScrollReveal } from "./components/ScrollReveal";
 import { getEvents } from "./lib/meetup";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Page() {
   const events = await getEvents();
