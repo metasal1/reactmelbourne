@@ -40,7 +40,12 @@ export const metadata: Metadata = {
   publisher: "React Melbourne",
   category: "technology",
   alternates: {
-    canonical: "/",
+    types: {
+      "text/plain": [
+        { url: "/llms.txt", title: "llms.txt" },
+        { url: "/llms-full.txt", title: "llms-full.txt" },
+      ],
+    },
   },
   openGraph: {
     title: "React Melbourne — JavaScript meetup for devs building real things",
@@ -73,9 +78,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
-      <GoogleAnalytics />
+    <html lang="en-AU" className={`${fraunces.variable} ${jetbrainsMono.variable}`}>
+      <body>
+        {children}
+        <GoogleAnalytics />
+      </body>
     </html>
   );
 }

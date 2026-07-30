@@ -31,38 +31,77 @@ export async function subscribe(
     return { ok: false, message: "Server not configured." };
   }
 
+  const existing = await resendHasContact(apiKey, audienceId, email);
+  if (existing === "error") {
+    return { ok: false, message: "Couldn't save right now. Try again?" };
+  }
+  if (existing === true) {
+    return {
+      ok: true,
+      message: "You're already on the list — see you there.",
+    };
+  }
+
   const add = await resendAddContact(apiKey, audienceId, email);
   if (add.status === "error") {
     return { ok: false, message: "Couldn't save right now. Try again?" };
   }
+  if (add.status === "existing") {
+    return {
+      ok: true,
+      message: "You're already on the list — see you there.",
+    };
+  }
 
-  if (add.status === "new") {
-    await resendSendWelcome(apiKey, email).catch(() => {});
+  await resendSendWelcome(apiKey, email).catch(() => {});
 
-    const h = await headers();
-    const country = h.get("cf-ipcountry") ?? "";
-    const ip = h.get("cf-connecting-ip") ?? "";
-    const tgToken = process.env.TELEGRAM_BOT_TOKEN;
-    const tgChat = process.env.TELEGRAM_CHAT_ID;
-    if (tgToken && tgChat) {
-      const text = `🆕 react_melbourne subscriber [${source}]\n\n${email}\n${country || "-"} · ${ip || "-"}`;
-      await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: tgChat, text, disable_web_page_preview: true }),
-      }).catch(() => {});
-    }
+  const h = await headers();
+  const country = h.get("cf-ipcountry") ?? "";
+  const ip = h.get("cf-connecting-ip") ?? "";
+  const tgToken = process.env.TELEGRAM_BOT_TOKEN;
+  const tgChat = process.env.TELEGRAM_CHAT_ID;
+  if (tgToken && tgChat) {
+    const text = `🆕 react_melbourne subscriber [${source}]\n\n${email}\n${country || "-"} · ${ip || "-"}`;
+    await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: tgChat, text, disable_web_page_preview: true }),
+    }).catch(() => {});
   }
 
   return {
     ok: true,
-    message: add.status === "new"
-      ? "You're in. Welcome."
-      : "You're already on the list — see you there.",
+    message: "You're in. Welcome.",
   };
 }
 
 type AddResult = { status: "new" | "existing" | "error" };
+
+async function resendHasContact(
+  apiKey: string,
+  audienceId: string,
+  email: string,
+): Promise<boolean | "error"> {
+  try {
+    const res = await fetch(
+      `https://api.resend.com/audiences/${audienceId}/contacts/${encodeURIComponent(email)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "User-Agent": "reactmelbourne/1.0",
+        },
+        cache: "no-store",
+      },
+    );
+    if (res.ok) return true;
+    if (res.status === 404) return false;
+    console.error("Resend get contact failed", res.status, await res.text());
+    return "error";
+  } catch (err) {
+    console.error("Resend get contact threw", err);
+    return "error";
+  }
+}
 
 async function resendAddContact(
   apiKey: string,
@@ -75,8 +114,9 @@ async function resendAddContact(
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          "User-Agent": "reactmelbourne/1.0",
         },
         body: JSON.stringify({ email, unsubscribed: false }),
       },
@@ -92,6 +132,7 @@ async function resendAddContact(
     const name = (body.name ?? "").toLowerCase();
     if (
       res.status === 409 ||
+      res.status === 422 ||
       msg.includes("already exists") ||
       msg.includes("contact already") ||
       name.includes("contact_exists") ||
