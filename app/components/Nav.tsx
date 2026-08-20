@@ -3,18 +3,19 @@ import { JoinModal } from "./JoinModal";
 export function Nav() {
   return (
     <nav>
-      <a href="#" className="logo">
+      <a href="/" className="logo">
         <span className="logo-dot" />
         <span>
           reactmelbourne<span style={{ color: "var(--cyan)" }}>.</span>com
         </span>
       </a>
       <div className="nav-links">
-        <a href="#events">events</a>
-        <a href="#about">about</a>
-        <a href="#community">community</a>
-        <a href="#speakers">speak</a>
-        <a href="#sponsors">sponsors</a>
+        <a href="/#events">events</a>
+        <a href="/#about">about</a>
+        <a href="/#community">community</a>
+        <a href="/#speakers">speak</a>
+        <a href="/#sponsors">sponsors</a>
+        <a href="/brand">brand</a>
       </div>
       <JoinModal />
     </nav>
