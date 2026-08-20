@@ -1,60 +1,16 @@
 "use server";
 
 import { headers } from "next/headers";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const RESEND_URL = "https://api.resend.com/emails";
+import { RESEND_TEMPLATE_IDS } from "../lib/resend-templates";
+import {
+  EMAIL_RE,
+  esc,
+  fromHeader,
+  notifyDest,
+  sendTemplate,
+} from "../lib/resend";
 
 export type ActionState = { ok: boolean; message: string };
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function nl2br(s: string): string {
-  return escapeHtml(s).replace(/\n/g, "<br/>");
-}
-
-async function resendSend(opts: {
-  apiKey: string;
-  from: string;
-  to: string;
-  replyTo?: string;
-  subject: string;
-  text: string;
-  html: string;
-}): Promise<boolean> {
-  try {
-    const res = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${opts.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: opts.from,
-        to: [opts.to],
-        ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
-        subject: opts.subject,
-        text: opts.text,
-        html: opts.html,
-      }),
-    });
-    if (!res.ok) {
-      console.error("Resend send failed", res.status, await res.text());
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error("Resend send threw", err);
-    return false;
-  }
-}
 
 async function notifyTelegram(text: string) {
   const tgToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -70,16 +26,6 @@ async function notifyTelegram(text: string) {
       disable_web_page_preview: true,
     }),
   }).catch(() => {});
-}
-
-function fromHeader(): string {
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "";
-  const fromName = process.env.RESEND_FROM_NAME || "React Melbourne";
-  return `${fromName} <${fromEmail}>`;
-}
-
-function notifyDest(): string {
-  return process.env.NOTIFY_EMAIL || "gm@metasal.xyz";
 }
 
 export async function submitSponsor(
@@ -110,75 +56,58 @@ export async function submitSponsor(
   const h = await headers();
   const country = h.get("cf-ipcountry") ?? "";
   const ip = h.get("cf-connecting-ip") ?? "";
+  const meta = `${country || "-"} · ${ip || "-"}`;
 
-  const notifySubject = `💰 Sponsor inquiry: ${company}`;
-  const notifyText = [
-    `Company: ${company}`,
-    `Contact: ${name} <${email}>`,
-    kind ? `Type: ${kind}` : "",
-    "",
-    notes || "(no notes)",
-    "",
-    `Source: ${country || "-"} · ${ip || "-"}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
-  const notifyHtml = `
-<p><strong>${escapeHtml(company)}</strong></p>
-<p>${escapeHtml(name)} · <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
-${kind ? `<p>Type: ${escapeHtml(kind)}</p>` : ""}
-<hr/>
-<p>${notes ? nl2br(notes) : "<em>(no notes)</em>"}</p>
-<hr/>
-<p style="color:#999;font-size:12px;">${escapeHtml(country || "-")} · ${escapeHtml(ip || "-")}</p>
-`.trim();
-
-  const notified = await resendSend({
+  const notified = await sendTemplate({
     apiKey,
     from: fromHeader(),
     to: notifyDest(),
     replyTo: email,
-    subject: notifySubject,
-    text: notifyText,
-    html: notifyHtml,
+    templateId: RESEND_TEMPLATE_IDS.sponsorNotify,
+    variables: {
+      COMPANY: company,
+      CONTACT_NAME: name,
+      CONTACT_EMAIL: email,
+      KIND: kind || "—",
+      NOTES: notes || "—",
+      META: meta,
+    },
+    tags: [
+      { name: "category", value: "sponsor" },
+      { name: "product", value: "reactmelbourne" },
+    ],
   });
 
-  if (!notified) {
+  if (!notified.ok) {
     return {
       ok: false,
       message: "Couldn't send right now. Try again in a bit?",
     };
   }
 
-  await resendSend({
+  await sendTemplate({
     apiKey,
     from: fromHeader(),
     to: email,
-    subject: "We got your sponsorship inquiry",
-    text:
-      `Hi ${name},\n\n` +
-      `Thanks for reaching out about sponsoring React Melbourne. We've got your message and we'll reply from hello@reactmelbourne.com soon.\n\n` +
-      `If anything's missing, just reply to this email.\n\n` +
-      `— React Melbourne`,
-    html: `
-<p>Hi ${escapeHtml(name)},</p>
-<p>Thanks for reaching out about sponsoring <strong>React Melbourne</strong>. We've got your message and we'll reply from <a href="mailto:hello@reactmelbourne.com">hello@reactmelbourne.com</a> soon.</p>
-<p>If anything's missing, just reply to this email.</p>
-<p>— React Melbourne</p>
-`.trim(),
-  }).catch(() => {});
+    templateId: RESEND_TEMPLATE_IDS.sponsorConfirm,
+    variables: { CONTACT_NAME: name },
+    tags: [
+      { name: "category", value: "sponsor-confirm" },
+      { name: "product", value: "reactmelbourne" },
+    ],
+  });
 
   await notifyTelegram(
     [
       "💰 <b>Sponsor inquiry</b>",
       "",
-      `<b>${escapeHtml(company)}</b>`,
-      `${escapeHtml(name)} · <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`,
-      kind ? `Type: ${escapeHtml(kind)}` : "",
+      `<b>${esc(company)}</b>`,
+      `${esc(name)} · <a href="mailto:${esc(email)}">${esc(email)}</a>`,
+      kind ? `Type: ${esc(kind)}` : "",
       "",
-      notes ? escapeHtml(notes) : "(no notes)",
+      notes ? esc(notes) : "(no notes)",
       "",
-      `${country || "-"} · ${ip || "-"}`,
+      meta,
     ]
       .filter(Boolean)
       .join("\n"),
@@ -225,80 +154,63 @@ export async function submitTalk(
   const h = await headers();
   const country = h.get("cf-ipcountry") ?? "";
   const ip = h.get("cf-connecting-ip") ?? "";
+  const meta = `${country || "-"} · ${ip || "-"}`;
 
-  const notifySubject = `🎤 Talk submission: ${title}`;
-  const notifyText = [
-    `Title: ${title}`,
-    `Speaker: ${name} <${email}>`,
-    length ? `Length: ${length}` : "",
-    "",
-    "Abstract:",
-    abstract,
-    notes ? "\nNotes:\n" + notes : "",
-    "",
-    `Source: ${country || "-"} · ${ip || "-"}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
-  const notifyHtml = `
-<p><strong>${escapeHtml(title)}</strong></p>
-<p>${escapeHtml(name)} · <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
-${length ? `<p>Length: ${escapeHtml(length)}</p>` : ""}
-<hr/>
-<p><strong>Abstract</strong></p>
-<p>${nl2br(abstract)}</p>
-${notes ? `<hr/><p><strong>Notes</strong></p><p>${nl2br(notes)}</p>` : ""}
-<hr/>
-<p style="color:#999;font-size:12px;">${escapeHtml(country || "-")} · ${escapeHtml(ip || "-")}</p>
-`.trim();
-
-  const notified = await resendSend({
+  const notified = await sendTemplate({
     apiKey,
     from: fromHeader(),
     to: notifyDest(),
     replyTo: email,
-    subject: notifySubject,
-    text: notifyText,
-    html: notifyHtml,
+    templateId: RESEND_TEMPLATE_IDS.talkNotify,
+    variables: {
+      TITLE: title,
+      CONTACT_NAME: name,
+      CONTACT_EMAIL: email,
+      LENGTH: length || "—",
+      ABSTRACT: abstract,
+      NOTES: notes || "—",
+      META: meta,
+    },
+    tags: [
+      { name: "category", value: "talk" },
+      { name: "product", value: "reactmelbourne" },
+    ],
   });
 
-  if (!notified) {
+  if (!notified.ok) {
     return {
       ok: false,
       message: "Couldn't send right now. Try again in a bit?",
     };
   }
 
-  await resendSend({
+  await sendTemplate({
     apiKey,
     from: fromHeader(),
     to: email,
-    subject: `We got your talk: ${title}`,
-    text:
-      `Hi ${name},\n\n` +
-      `Thanks for pitching "${title}" to React Melbourne. We'll review and reply from hello@reactmelbourne.com.\n\n` +
-      `If anything's missing, just reply to this email.\n\n` +
-      `— React Melbourne`,
-    html: `
-<p>Hi ${escapeHtml(name)},</p>
-<p>Thanks for pitching <strong>${escapeHtml(title)}</strong> to React Melbourne. We'll review and reply from <a href="mailto:hello@reactmelbourne.com">hello@reactmelbourne.com</a>.</p>
-<p>If anything's missing, just reply to this email.</p>
-<p>— React Melbourne</p>
-`.trim(),
-  }).catch(() => {});
+    templateId: RESEND_TEMPLATE_IDS.talkConfirm,
+    variables: {
+      CONTACT_NAME: name,
+      TITLE: title,
+    },
+    tags: [
+      { name: "category", value: "talk-confirm" },
+      { name: "product", value: "reactmelbourne" },
+    ],
+  });
 
   await notifyTelegram(
     [
       "🎤 <b>Talk submission</b>",
       "",
-      `<b>${escapeHtml(title)}</b>`,
-      `${escapeHtml(name)} · <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`,
-      length ? `Length: ${escapeHtml(length)}` : "",
+      `<b>${esc(title)}</b>`,
+      `${esc(name)} · <a href="mailto:${esc(email)}">${esc(email)}</a>`,
+      length ? `Length: ${esc(length)}` : "",
       "",
-      escapeHtml(abstract),
-      notes ? "\n" + escapeHtml(notes) : "",
+      esc(abstract),
+      notes ? "\n" + esc(notes) : "",
       "",
-      `${country || "-"} · ${ip || "-"}`,
+      meta,
     ]
       .filter(Boolean)
       .join("\n"),
