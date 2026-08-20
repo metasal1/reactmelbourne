@@ -1255,3 +1255,183 @@ footer {
   white-space: nowrap;
 }
 .adm-dim { color: var(--ink-dim); }
+
+/* ===== SUBPAGES / BRAND ===== */
+.subpage {
+  min-height: 60vh;
+  padding-top: 40px;
+}
+.prose-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 100px 24px 80px;
+}
+.prose-page h1 {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.05;
+  margin: 8px 0 20px;
+  letter-spacing: -0.02em;
+}
+.prose-page h1 em {
+  font-style: italic;
+  color: var(--cyan);
+  font-weight: 400;
+}
+.prose-page h2 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 28px;
+  margin: 36px 0 12px;
+}
+.prose-page p {
+  color: var(--ink-dim);
+  line-height: 1.7;
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+.prose-page a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+.prose-page a:hover { text-decoration: underline; }
+.prose-lede {
+  font-size: 18px !important;
+  color: var(--ink) !important;
+  margin-bottom: 28px !important;
+}
+.prose-note {
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+.brand-wordmark-card {
+  margin: 8px 0 28px;
+  padding: 28px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(97, 218, 251, 0.14), transparent 45%),
+    radial-gradient(circle at 90% 100%, rgba(255, 94, 58, 0.1), transparent 40%),
+    var(--bg-2);
+}
+.brand-wordmark {
+  font-size: clamp(28px, 6vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.brand-underscore { color: var(--cyan); }
+.brand-wordmark-meta {
+  margin: 14px 0 0 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim) !important;
+}
+.brand-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 24px 0 32px;
+}
+.brand-swatch {
+  border-radius: 12px;
+  min-height: 78px;
+  display: grid;
+  place-items: end start;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.brand-type-grid {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 28px;
+}
+.brand-type-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  background: var(--bg-2);
+}
+.brand-type-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  margin-bottom: 12px;
+}
+.brand-type-display {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(22px, 4vw, 32px);
+  line-height: 1.15;
+  color: var(--ink);
+}
+.brand-type-display em {
+  color: var(--cyan);
+  font-style: italic;
+  font-weight: 400;
+}
+.brand-type-mono {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.brand-assets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+.brand-asset {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--bg-2);
+  text-decoration: none !important;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+.brand-asset:hover { border-color: var(--cyan); }
+.brand-asset-preview {
+  height: 88px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+  background: #050708;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.brand-asset-preview img {
+  max-width: 80%;
+  max-height: 56px;
+  object-fit: contain;
+}
+.brand-asset strong {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.brand-asset span {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.brand-rules {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.brand-rules li {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-2);
+  color: var(--ink-dim);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.brand-rules strong { color: var(--ink); }
+.brand-rules .mono { color: var(--cyan); font-size: 13px; }
